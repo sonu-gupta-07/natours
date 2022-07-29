@@ -4,6 +4,8 @@ const catchAsync = require('./../utils/catchAsync');
 
 const AppError = require('./../utils/appError');
 
+const factory = require('./handlerFactory');
+
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach(el => {
@@ -46,20 +48,11 @@ exports.createUser = (req, res) => {
     message: 'This route is not yet defined'
   });
 };
+// Do not update password with this
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined'
-  });
-};
+exports.updateUser = factory.updateOne(User);
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined'
-  });
-};
+exports.deleteUser = factory.deleteOne(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error is user POSTS passwor ddata ;
