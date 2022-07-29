@@ -13,22 +13,18 @@ router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-router.patch('/updateMe', authController.protect, userController.updateMe);
+// router that need to be authenticated
+router.use(authController.protect);
 
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.patch('/updateMe', userController.updateMe);
 
-router.get(
-  '/me',
-  authController.protect,
-  userController.getMe,
-  userController.getUser
-);
+router.delete('/deleteMe', userController.deleteMe);
 
-router.patch(
-  '/updateMyPassword',
-  authController.protect,
-  authController.updatePassword
-);
+router.get('/me', userController.getMe, userController.getUser);
+
+router.patch('/updateMyPassword', authController.updatePassword);
+
+router.use(authController.restrictTo('admin'));
 
 router
   .route('/')
