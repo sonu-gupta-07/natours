@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 
+const cookieParser = require('cookie-parser');
+
 const helmet = require('helmet');
 
 const mongoSanitize = require('express-mongo-sanitize');
@@ -35,7 +37,39 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Security http
 
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", 'data:', 'blob:'],
+
+      baseUri: ["'self'"],
+
+      fontSrc: ["'self'", 'https:', 'data:'],
+
+      scriptSrc: ["'self'", 'https://*.cloudflare.com'],
+
+      scriptSrc: ["'self'", 'https://*.stripe.com'],
+
+      scriptSrc: ["'self'", 'http:', 'https://*.mapbox.com', 'data:'],
+
+      frameSrc: ["'self'", 'https://*.stripe.com'],
+
+      objectSrc: ["'none'"],
+
+      styleSrc: ["'self'", 'https:', 'unsafe-inline'],
+
+      workerSrc: ["'self'", 'data:', 'blob:'],
+
+      childSrc: ["'self'", 'blob:'],
+
+      imgSrc: ["'self'", 'data:', 'blob:'],
+
+      connectSrc: ["'self'", 'blob:', 'https://*.mapbox.com'],
+
+      upgradeInsecureRequests: []
+    }
+  })
+);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -54,6 +88,8 @@ app.use('/api', limiter);
 // Body parser
 
 app.use(express.json({ limit: '10Kb' }));
+
+app.use(cookieParser());
 
 // Data Sanitisation against noSQL connection
 
@@ -75,7 +111,7 @@ app.use(
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
+  console.log(req.cookies);
   next();
 });
 
