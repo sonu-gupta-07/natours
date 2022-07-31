@@ -110,7 +110,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (freshUser.changedPasswordAfter(decoded.iat)) {
     return next(new AppError('The user recently changed password', 401));
   }
-
+  res.locals.user = freshUser;
   req.user = freshUser;
   // grant acess to protected route
   next();
